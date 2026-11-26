@@ -1,6 +1,6 @@
 # Pluginator
 
-A standalone browser for OrcaSlicer plugins with one-click install. It needs no Orca Cloud login.
+A standalone browser for [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer) plugins with one-click install. It needs no Orca Cloud login.
 
 ```
 Pluginator.cmd            (double-click, or: npm install && npm start)
@@ -16,7 +16,7 @@ The current version only supports **Windows**. The code already has macOS and Li
 
 ### Why it doesn't use Orca Cloud
 
-OrcaSlicer 2.5's plugin browser reads from `api.orcaslicer.com`. Every endpoint it uses (`/api/v1/plugins/subscriptions`, `/mine`, `/explore`, `/download`) returns `401 missing_authorization` without an account token. See `OrcaSlicer/src/slic3r/Utils/OrcaCloudServiceAgent.cpp` and `src/slic3r/plugin/CloudPluginService.cpp`.
+OrcaSlicer 2.5's plugin browser reads from `api.orcaslicer.com`. Every endpoint it uses (`/api/v1/plugins/subscriptions`, `/mine`, `/explore`, `/download`) returns `401 missing_authorization` without an account token. See [`OrcaCloudServiceAgent.cpp`](https://github.com/SoftFever/OrcaSlicer/blob/main/src/slic3r/Utils/OrcaCloudServiceAgent.cpp) and [`CloudPluginService.cpp`](https://github.com/SoftFever/OrcaSlicer/blob/main/src/slic3r/plugin/CloudPluginService.cpp).
 
 ### Where the catalogue comes from
 
@@ -33,7 +33,7 @@ Builds for other operating systems or CPUs are filtered out. This covers both st
 
 ### How a plugin is installed
 
-Pluginator does exactly what OrcaSlicer's own install-from-file does (`plugin_loader::install_plugin` in `src/slic3r/plugin/PluginLoader.cpp`):
+Pluginator does exactly what OrcaSlicer's own install-from-file does (`plugin_loader::install_plugin` in [`PluginLoader.cpp`](https://github.com/SoftFever/OrcaSlicer/blob/main/src/slic3r/plugin/PluginLoader.cpp)):
 
 ```
 <data dir>/orca_plugins/<escaped file name>/<file name>
@@ -54,3 +54,7 @@ The default data folder is `%APPDATA%\OrcaSlicer`. You can change it in Settings
 - The server listens only on `127.0.0.1`. It rejects other `Host` headers and any write that doesn't carry the `X-Pluginator` header.
 - Pluginator's own state lives in `%APPDATA%\pluginator`: settings, install records and the catalogue cache.
 - Python plugins need OrcaSlicer 2.5 or newer.
+
+## License
+
+Pluginator is licensed under the [GNU GPL v3](LICENSE). It is an independent tool and contains no OrcaSlicer code. It only follows OrcaSlicer's on-disk plugin layout. [OrcaSlicer](https://github.com/SoftFever/OrcaSlicer) itself is licensed under the GNU AGPL v3.
