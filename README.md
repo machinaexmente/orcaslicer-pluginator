@@ -13,7 +13,7 @@ It opens in its own window. Browse or search the catalogue, open a plugin, and p
 ## Platform support
 
 - **Windows**: tested.
-- **Linux**: tested with the Flathub OrcaSlicer (`com.orcaslicer.OrcaSlicer`), the install OrcaSlicer recommends. AppImage and distro builds use `~/.config/OrcaSlicer`, which is also detected.
+- **Linux**: tested with the Flathub OrcaSlicer (`com.orcaslicer.OrcaSlicer`), the install OrcaSlicer recommends, on openSUSE Tumbleweed and on Ubuntu 24.04 with GNOME (Wayland), KDE Plasma (X11) and Xfce (X11). Node 18 (Ubuntu's own package) is enough. AppImage and distro builds use `~/.config/OrcaSlicer`, which is also detected.
 - **macOS**: the data folder, process detection and build filtering have defaults, but they are untested.
 
 Contributions are welcome: open an issue or a pull request.
