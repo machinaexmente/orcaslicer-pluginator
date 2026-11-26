@@ -359,6 +359,12 @@ async function openSettings() {
   $('#default-dir').textContent = s.defaultDataDir;
   $('#token-state').textContent = s.githubToken ? 'set' : 'not set';
   $('#data-dir-check').textContent = s.exists ? `Found${s.orcaVersion ? ` OrcaSlicer ${s.orcaVersion}` : ''} data at ${s.dataDir}` : `No OrcaSlicer data at ${s.dataDir}`;
+  const installs = s.installs || [];
+  const detected = $('#detected-dirs');
+  detected.hidden = installs.length < 2;
+  detected.innerHTML = `<span class="muted small">Detected installs:</span>` + installs.map((d) => `
+    <button type="button" class="btn" data-dir="${esc(d.dataDir)}" title="${esc(d.dataDir)}">${esc(d.kind)}${d.orcaVersion ? ` · ${esc(d.orcaVersion)}` : ''}</button>`).join('');
+  detected.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { $('#data-dir').value = b.dataset.dir; }));
   $('#settings').showModal();
 }
 

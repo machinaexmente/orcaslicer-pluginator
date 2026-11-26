@@ -10,7 +10,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { loadCatalog, findPlugin, REGISTRY_REPO } from './lib/registry.js';
 import { resolvePlugin, fetchCandidate } from './lib/resolve.js';
-import { defaultDataDir, describeDataDir, isOrcaRunning, listInstalled, installPackage, uninstallFolder } from './lib/orca.js';
+import { defaultDataDir, describeDataDir, detectInstalls, isOrcaRunning, listInstalled, installPackage, uninstallFolder } from './lib/orca.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(here, 'public');
@@ -37,7 +37,7 @@ async function writeJson(file, value) {
 
 async function settings() {
   const s = await readJson(SETTINGS_FILE, {});
-  return { dataDir: s.dataDir || defaultDataDir(), customDataDir: !!s.dataDir };
+  return { dataDir: s.dataDir || (await defaultDataDir()), customDataDir: !!s.dataDir };
 }
 
 // registry id -> { folder, fileName, version, ref, source, sha256, installedAt }, per data dir.
@@ -82,7 +82,7 @@ const route = (method, pattern, handler) => routes.push({ method, pattern, handl
 
 route('GET', /^\/api\/status$/, async () => {
   const s = await settings();
-  return { ...(await describeDataDir(s.dataDir)), customDataDir: s.customDataDir, defaultDataDir: defaultDataDir(), orcaRunning: await isOrcaRunning(), registry: `https://github.com/${REGISTRY_REPO}`, githubToken: !!(process.env.GITHUB_TOKEN || process.env.GH_TOKEN) };
+  return { ...(await describeDataDir(s.dataDir)), customDataDir: s.customDataDir, defaultDataDir: await defaultDataDir(), installs: await detectInstalls(), orcaRunning: await isOrcaRunning(), registry: `https://github.com/${REGISTRY_REPO}`, githubToken: !!(process.env.GITHUB_TOKEN || process.env.GH_TOKEN) };
 });
 
 route('POST', /^\/api\/settings$/, async (req) => {
@@ -184,7 +184,22 @@ function openWindow(url) {
     if (exe) return spawn(exe, [`--app=${url}`, '--window-size=1280,860'], { detached: true, stdio: 'ignore' }).unref();
     return spawn('cmd', ['/c', 'start', '', url], { detached: true, stdio: 'ignore' }).unref();
   }
+  if (process.platform === 'linux') {
+    const exe = linuxAppBrowser();
+    if (exe) return spawn(exe, [`--app=${url}`, '--window-size=1280,860'], { detached: true, stdio: 'ignore' }).unref();
+  }
   spawn(process.platform === 'darwin' ? 'open' : 'xdg-open', [url], { detached: true, stdio: 'ignore' }).unref();
+}
+
+function linuxAppBrowser() {
+  const onPath = ['chromium', 'chromium-browser', 'google-chrome-stable', 'google-chrome', 'microsoft-edge-stable', 'brave-browser', 'vivaldi-stable', 'vivaldi'];
+  const flatpaks = ['org.chromium.Chromium', 'com.google.Chrome', 'com.microsoft.Edge', 'com.brave.Browser', 'com.vivaldi.Vivaldi'];
+  const flatpakBins = [path.join(os.homedir(), '.local', 'share', 'flatpak', 'exports', 'bin'), '/var/lib/flatpak/exports/bin'];
+  const candidates = [
+    ...onPath.flatMap((name) => (process.env.PATH || '').split(path.delimiter).filter(Boolean).map((dir) => path.join(dir, name))),
+    ...flatpaks.flatMap((id) => flatpakBins.map((dir) => path.join(dir, id))),
+  ];
+  return candidates.find((p) => { try { fss.accessSync(p, fss.constants.X_OK); return fss.statSync(p).isFile(); } catch { return false; } });
 }
 
 server.on('error', (err) => {
