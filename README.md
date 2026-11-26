@@ -35,7 +35,7 @@ The registry only links the plugin's repository, so Pluginator looks for the act
 1. `.py` / `.whl` assets on the latest GitHub release. Pluginator tries the API first and falls back to the release HTML pages when the anonymous 60 requests/hour limit runs out. If the release publishes a `SHA256SUMS` file (or GitHub asset digests), the download is checked against it.
 2. Otherwise, `.py` files with a PEP 723 `[tool.orcaslicer.plugin]` block, or committed `.whl` files, in the source tree. It checks the release tag first, then the default branch.
 
-Builds for other operating systems or CPUs are filtered out. This covers both standard wheel tags and Orca-Cloud-style names like `name_win_x86_64.py`. In testing, 122 of the 127 one-click entries resolved to a file on Windows, and 121 on Linux x86_64. The other five ship no prebuilt file, ship Linux/macOS builds only, or publish only to Orca Cloud.
+Builds for other operating systems or CPUs are filtered out. This covers both standard wheel tags and Orca-Cloud-style names like `name_win_x86_64.py`. In testing, 122 of the 127 one-click entries resolved to a file on Windows, and 122 on Linux x86_64. The rest ship no prebuilt file, ship builds for other systems only, or publish only to Orca Cloud.
 
 ### How a plugin is installed
 
