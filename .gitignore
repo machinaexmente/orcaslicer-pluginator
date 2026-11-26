@@ -1,0 +1,11 @@
+# OrcaSlicer source checkout, used only as a reference
+OrcaSlicer/
+
+node_modules/
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

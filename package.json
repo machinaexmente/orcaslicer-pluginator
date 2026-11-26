@@ -1,0 +1,17 @@
+{
+  "name": "pluginator",
+  "version": "0.1.0",
+  "description": "Standalone browser and installer for OrcaSlicer plugins, no Orca Cloud login required.",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "bin": { "pluginator": "server.js" },
+  "scripts": {
+    "start": "node server.js",
+    "start:nobrowser": "node server.js --no-open"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "yaml": "^2.6.0"
+  }
+}
